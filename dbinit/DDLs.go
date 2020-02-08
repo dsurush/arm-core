@@ -1,6 +1,6 @@
 package dbinit
 
-const clientsDDL  = `create table clients (
+const clientsDDL  = `create table if not exists clients (
     id integer primary key autoincrement,
     name text not null,
     surname text not null,
@@ -9,20 +9,20 @@ const clientsDDL  = `create table clients (
     locked boolean not null
 );`
 
-const accountsDDL = `create table accounts (
+const accountsDDL = `create table if not exists accounts (
     id integer primary key autoincrement,
     user_id integer not null references clients,
     name text not null,
     locked boolean not null
 );`
 
-const ATMsDDL  = `create table ATMs (
+const ATMsDDL  = `create table if not exists ATMs (
     id integer primary key autoincrement,
     name text not null,
     locked boolean not null
 );`
 
-const servicesDDL =  `create table services (
+const servicesDDL =  `create table if not exists services (
     id integer primary key autoincrement,
     name text not null,
     price boolean not null
