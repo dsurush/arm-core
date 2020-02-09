@@ -5,9 +5,9 @@ import (
 	"log"
 )
 
-func AddClient(name, surname, login, password string, db *sql.DB) (err error){
+func AddClient(name, surname, login, password, phoneNumber string, db *sql.DB) (err error){
 	locked := true
-	_, err = db.Exec(addClientDML, name, surname, login, password, locked)
+	_, err = db.Exec(addClientDML, name, surname, login, password, phoneNumber, locked)
 	if err != nil {
 		log.Fatalf("Пользователь недобавлен: %s", err)
 	}

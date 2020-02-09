@@ -6,6 +6,7 @@ const clientsDDL  = `create table if not exists clients (
     surname text not null,
     login text not null unique,
     password text not null check ( length(password) > 4 ),
+	Phone text not null,
     locked boolean not null
 );`
 
