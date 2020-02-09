@@ -14,6 +14,7 @@ const accountsDDL = `create table if not exists accounts (
     id integer primary key autoincrement,
     user_id integer not null references clients,
     name text not null,
+    accountNumber integer autoincrement, 
     locked boolean not null
 );`
 
