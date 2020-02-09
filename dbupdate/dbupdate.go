@@ -13,3 +13,13 @@ func AddClient(name, surname, login, password string, db *sql.DB) (err error){
 	}
 	return nil
 }
+
+func AddATM(address string, db *sql.DB) (err error){
+	locked := true
+	_, err = db.Exec(addATM, address, locked)
+	if err != nil {
+		log.Fatalf("Запись недобавлена: %e", err)
+ 		//return err
+	}
+	return nil
+}
