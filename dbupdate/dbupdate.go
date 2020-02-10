@@ -2,6 +2,7 @@ package dbupdate
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 )
 
@@ -20,5 +21,37 @@ func AddATM(address string, locked bool, db *sql.DB) (err error){
 		log.Fatalf("Запись недобавлена: %e", err)
  		//return err
 	}
+	return nil
+}
+
+func AddAccount(user_id int64, name string, locked bool, db *sql.DB) (err error){
+	var count int
+	//Number = 1_000_000_000_000_000
+	err = db.QueryRow(`select count(*) from accounts`).Scan(&count)
+	if err != nil {
+		fmt.Errorf("cant %e", err)
+		return err
+	}
+	var accountNumber int64
+	var lastAccountNumber int64
+	accountNumber = 1_000_000_000_000_000
+	if count != 0 {
+		err := db.QueryRow(`select max(accountNumber) from accounts`).Scan(&lastAccountNumber)
+		if err != nil {
+			fmt.Errorf("cant find last Account Number %e", err)
+			return err
+		}
+		accountNumber = lastAccountNumber + 1
+	}
+	_, err = db.Exec(addAccount, user_id, name, accountNumber, locked)
+	if err != nil {
+		fmt.Errorf("cant insert %e", err)
+	}
+
+	fmt.Println("Success")
+	return nil
+}
+
+func Test() error {
 	return nil
 }

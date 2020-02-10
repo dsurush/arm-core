@@ -12,9 +12,9 @@ const clientsDDL  = `create table if not exists clients (
 
 const accountsDDL = `create table if not exists accounts (
     id integer primary key autoincrement,
-    user_id integer not null references clients,
+    user_id integer references clients,
     name text not null,
-    accountNumber integer autoincrement, 
+	accountNumber integer, 
     locked boolean not null
 );`
 
