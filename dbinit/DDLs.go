@@ -27,5 +27,5 @@ const ATMsDDL  = `create table if not exists ATMs (
 const servicesDDL =  `create table if not exists services (
     id integer primary key autoincrement,
     name text not null,
-    price boolean not null
+    price int not null
 );`

@@ -46,9 +46,19 @@ func AddAccount(user_id int64, name string, locked bool, db *sql.DB) (err error)
 	_, err = db.Exec(addAccount, user_id, name, accountNumber, locked)
 	if err != nil {
 		fmt.Errorf("cant insert %e", err)
+		return err
 	}
 
 	fmt.Println("Success")
+	return nil
+}
+
+func AddService(serviceName string, price int64, db *sql.DB) (err error){
+	_, err = db.Exec(addService, serviceName, price)
+	if err != nil {
+		fmt.Errorf("Error in %s, err: %e", addService, err)
+		return err
+	}
 	return nil
 }
 

@@ -8,3 +8,6 @@ values ($1, $2)`
 
 const addAccount  = `insert into accounts(user_id, name, accountNumber, locked) 
 values (?, ?, ?, ?)`
+
+const addService = `insert into services(name, price)
+values (?, ?)`
