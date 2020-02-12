@@ -5,7 +5,7 @@ import (
 )
 
 func Init(db *sql.DB) (err error) {
-	ddls := []string{clientsDDL, accountsDDL, ATMsDDL, servicesDDL}
+	ddls := []string{foreignKeyOn, clientsDDL, accountsDDL, ATMsDDL, servicesDDL}
 	for _, ddl := range ddls{
 		_, err := db.Exec(ddl)
 		if err != nil {

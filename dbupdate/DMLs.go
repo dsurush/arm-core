@@ -11,3 +11,9 @@ values (?, ?, ?, ?)`
 
 const addService = `insert into services(name, price)
 values (?, ?)`
+
+const getAllClients = `select *from clients`
+
+const getAllAccounts = `select *from accounts`
+
+const getAllATMs = `select *from ATMs`

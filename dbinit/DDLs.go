@@ -1,5 +1,7 @@
 package dbinit
 
+const foreignKeyOn = `PRAGMA foreign_keys = ON;`
+
 const clientsDDL  = `create table if not exists clients (
     id integer primary key autoincrement,
     name text not null,
@@ -16,7 +18,7 @@ const accountsDDL = `create table if not exists accounts (
     name text not null,
 	accountNumber integer, 
     locked boolean not null
-);`
+)`
 
 const ATMsDDL  = `create table if not exists ATMs (
     id integer primary key autoincrement,
