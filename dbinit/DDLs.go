@@ -22,7 +22,7 @@ const accountsDDL = `create table if not exists accounts (
 
 const ATMsDDL  = `create table if not exists ATMs (
     id integer primary key autoincrement,
-    name text not null,
+    address text not null unique,
     locked boolean not null
 );`
 

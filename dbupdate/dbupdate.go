@@ -3,15 +3,17 @@ package dbupdate
 import (
 	"database/sql"
 	"fmt"
-	"github.com/dsurush/arm-core/dbupdate/models"
+	"github.com/dsurush/arm-core/dbupdate/cmodels"
 	"log"
 )
 
 func AddClient(name, surname, login, password, phoneNumber string, db *sql.DB) (err error){
 	locked := true
+	password = makeHash(password)
 	_, err = db.Exec(addClientDML, name, surname, login, password, phoneNumber, locked)
 	if err != nil {
 		log.Fatalf("Пользователь недобавлен: %s", err)
+		return err
 	}
 	return nil
 }
@@ -20,7 +22,7 @@ func AddATM(address string, locked bool, db *sql.DB) (err error){
 	_, err = db.Exec(addATM, address, locked)
 	if err != nil {
 		log.Fatalf("Запись недобавлена: %e", err)
- 		//return err
+ 		return err
 	}
 	return nil
 }
@@ -39,7 +41,7 @@ func AddAccount(user_id int64, name string, locked bool, db *sql.DB) (err error)
 	if count != 0 {
 		err := db.QueryRow(`select max(accountNumber) from accounts`).Scan(&lastAccountNumber)
 		if err != nil {
-			fmt.Errorf("cant find last Account Number %e", err)
+			fmt.Errorf("cant find last AccountWithUserName Number %e", err)
 			return err
 		}
 		accountNumber = lastAccountNumber + 1
@@ -63,7 +65,7 @@ func AddService(serviceName string, price int64, db *sql.DB) (err error){
 	return nil
 }
 
-func GetAllClients(db *sql.DB) (clients []models.Client, err error){
+func GetAllClients(db *sql.DB) (clients []cmodels.Client, err error){
 	rows, err := db.Query(getAllClients)
 	if err != nil {
 		log.Fatalf("1 wrong")
@@ -77,7 +79,7 @@ func GetAllClients(db *sql.DB) (clients []models.Client, err error){
 	}()
 
 	for rows.Next(){
-		client := models.Client{}
+		client := cmodels.Client{}
 		err = rows.Scan(&client.ID, &client.Name, &client.Surname, &client.NumberPhone, &client.Login, &client.Password, &client.Locked)
 		if err != nil {
 			log.Fatalf("2 wrong")
@@ -92,7 +94,7 @@ func GetAllClients(db *sql.DB) (clients []models.Client, err error){
 	return clients, nil
 }
 
-func GetAllAccounts(db *sql.DB) (accounts []models.Account, err error){
+func GetAllAccounts(db *sql.DB) (accounts []cmodels.AccountWithUserName, err error){
 	rows, err := db.Query(getAllAccounts)
 	if err != nil {
 		log.Fatalf("1 wrong")
@@ -106,8 +108,8 @@ func GetAllAccounts(db *sql.DB) (accounts []models.Account, err error){
 	}()
 
 	for rows.Next(){
-		account := models.Account{}
-		err = rows.Scan(&account.ID, &account.UserId, &account.Name, &account.AccountNumber, &account.Locked)
+		account := cmodels.AccountWithUserName{}
+		err = rows.Scan(&account.Account.ID, &account.Account.UserId, &account.Account.Name, &account.Account.AccountNumber, &account.Account.Locked, &account.Client.ID, &account.Client.Name, &account.Client.Surname, &account.Client.NumberPhone, &account.Client.Login, &account.Client.Password, &account.Client.Locked)
 		if err != nil {
 			log.Fatalf("2 wrong")
 			return nil, err
@@ -121,7 +123,7 @@ func GetAllAccounts(db *sql.DB) (accounts []models.Account, err error){
 	return accounts, nil
 }
 
-func GetAllATMs(db *sql.DB) (ATMs []models.ATM, err error){
+func GetAllATMs(db *sql.DB) (ATMs []cmodels.ATM, err error){
 	rows, err := db.Query(getAllATMs)
 	if err != nil {
 		log.Fatalf("1 wrong")
@@ -135,7 +137,7 @@ func GetAllATMs(db *sql.DB) (ATMs []models.ATM, err error){
 	}()
 
 	for rows.Next(){
-		ATM := models.ATM{}
+		ATM := cmodels.ATM{}
 		err = rows.Scan(&ATM.ID, &ATM.Name, &ATM.Locked)
 		if err != nil {
 			log.Fatalf("2 wrong")

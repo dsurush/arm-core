@@ -1,0 +1,17 @@
+package cmodels
+
+type Account struct {
+	ID int64
+	UserId int64
+	Name string
+	AccountNumber int64
+	Locked bool
+}
+
+type AccountWithUserName struct {
+	Account Account
+	Client Client
+}
+type AccountList struct {
+	AccountWithUserName []AccountWithUserName
+}

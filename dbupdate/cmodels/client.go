@@ -1,14 +1,15 @@
-package models
+package cmodels
 
 type Client struct{
 	ID int
 	Name string
 	Surname string
-	NumberPhone string
 	Login string
 	Password string
+	NumberPhone string
 	Locked bool
 }
 
 type ClientList struct {
+	Clients []Client
 }
