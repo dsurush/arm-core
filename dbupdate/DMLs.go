@@ -17,3 +17,9 @@ const getAllClients = `select *from clients`
 const getAllAccounts = `select *from accounts a left join clients c on a.user_id = c.id`
 
 const getAllATMs = `select *from ATMs`
+
+const loginSQL = `select login, password from clients where login = ?`
+
+const searchClientByLogin = `select id, surname from clients where login = ?`
+
+const searchAccountByIDSql = `select id, name, accountNumber, locked from accounts where user_id = ?`

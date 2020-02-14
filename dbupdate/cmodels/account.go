@@ -15,3 +15,14 @@ type AccountWithUserName struct {
 type AccountList struct {
 	AccountWithUserName []AccountWithUserName
 }
+
+type AccountForUser struct {
+	ID int64
+	Name string
+	AccountNumber int64
+	Locked bool
+}
+
+//type AccountListByID struct {
+//	Accounts []AccountForUser
+//}

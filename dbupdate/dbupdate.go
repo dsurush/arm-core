@@ -151,6 +151,49 @@ func GetAllATMs(db *sql.DB) (ATMs []cmodels.ATM, err error){
 	}
 	return ATMs, nil
 }
+/////////////////////----------CLIENT---------//////////////////////
+func QueryError(text string) (err error){
+	return fmt.Errorf(text)
+}
+
+func Login(login, password string, db *sql.DB) (loginPredicate bool, err error){
+	var dbLogin, dbPassword string
+	err = db.QueryRow(loginSQL, login).Scan(&dbLogin, &dbPassword)
+	if err != nil {
+//		fmt.Printf("%s, %e\n", loginSQL, err)
+		return false, err
+	}
+	err = QueryError("Несовпадение пароля")
+	if makeHash(password) != dbPassword {
+		//fmt.Println(makeHash(password), " ", dbPassword)
+		return true, err
+	}
+	//fmt.Println(makeHash(password), " ", dbPassword)
+	return true, nil
+}
+
+func SearchByLogin(login string, db *sql.DB) (id int64, surname string){
+	err := db.QueryRow(searchClientByLogin, login).Scan(&id, &surname)
+	if err != nil {
+		log.Fatalf("Ошибка в %s", searchClientByLogin)
+	}
+	return id, surname
+}
+
+func SearchAccountById(id int64, db *sql.DB) (Accounts []cmodels.AccountForUser, err error){
+	var account cmodels.AccountForUser
+
+	rows, err := db.Query(searchAccountByIDSql, id)
+	if err != nil {
+		fmt.Errorf("ne chitayutsya %e\n", err)
+		return nil, err
+	}
+	for rows.Next() {
+		rows.Scan(&account.ID, &account.Name, &account.AccountNumber, account.Locked)
+		Accounts = append(Accounts, account)
+	}
+	return Accounts, nil
+}
 
 func Test() error {
 	return nil
