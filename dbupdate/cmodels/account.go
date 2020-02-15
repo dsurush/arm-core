@@ -5,6 +5,7 @@ type Account struct {
 	UserId int64
 	Name string
 	AccountNumber int64
+	Balance int64
 	Locked bool
 }
 
@@ -20,6 +21,7 @@ type AccountForUser struct {
 	ID int64
 	Name string
 	AccountNumber int64
+	Balance int64
 	Locked bool
 }
 

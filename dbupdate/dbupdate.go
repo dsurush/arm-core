@@ -27,7 +27,7 @@ func AddATM(address string, locked bool, db *sql.DB) (err error){
 	return nil
 }
 
-func AddAccount(user_id int64, name string, locked bool, db *sql.DB) (err error){
+func AddAccount(userId int64, name string, balance int64, locked bool, db *sql.DB) (err error){
 	var count int
 	//Number = 1_000_000_000_000_000
 	err = db.QueryRow(`select count(*) from accounts`).Scan(&count)
@@ -46,7 +46,7 @@ func AddAccount(user_id int64, name string, locked bool, db *sql.DB) (err error)
 		}
 		accountNumber = lastAccountNumber + 1
 	}
-	_, err = db.Exec(addAccount, user_id, name, accountNumber, locked)
+	_, err = db.Exec(addAccount, userId, name, accountNumber, balance, locked)
 	if err != nil {
 		fmt.Errorf("cant insert %e", err)
 		return err
@@ -97,7 +97,7 @@ func GetAllClients(db *sql.DB) (clients []cmodels.Client, err error){
 func GetAllAccounts(db *sql.DB) (accounts []cmodels.AccountWithUserName, err error){
 	rows, err := db.Query(getAllAccounts)
 	if err != nil {
-		log.Fatalf("1 wrong")
+		log.Fatalf("1 wrong (Accc)")
 		return nil, err
 	}
 
@@ -109,15 +109,15 @@ func GetAllAccounts(db *sql.DB) (accounts []cmodels.AccountWithUserName, err err
 
 	for rows.Next(){
 		account := cmodels.AccountWithUserName{}
-		err = rows.Scan(&account.Account.ID, &account.Account.UserId, &account.Account.Name, &account.Account.AccountNumber, &account.Account.Locked, &account.Client.ID, &account.Client.Name, &account.Client.Surname, &account.Client.NumberPhone, &account.Client.Login, &account.Client.Password, &account.Client.Locked)
+		err = rows.Scan(&account.Account.ID, &account.Account.UserId, &account.Account.Name, &account.Account.AccountNumber, &account.Account.Balance, &account.Account.Locked, &account.Client.ID, &account.Client.Name, &account.Client.Surname, &account.Client.Login, &account.Client.Password, &account.Client.NumberPhone, &account.Client.Locked)
 		if err != nil {
-			log.Fatalf("2 wrong")
+			log.Fatalf("2 wrong (Accc)")
 			return nil, err
 		}
 		accounts = append(accounts, account)
 	}
 	if rows.Err() != nil {
-		log.Fatalf("3 wrong")
+		log.Fatalf("3 wrong (Accc)")
 		return nil, rows.Err()
 	}
 	return accounts, nil
@@ -189,10 +189,48 @@ func SearchAccountById(id int64, db *sql.DB) (Accounts []cmodels.AccountForUser,
 		return nil, err
 	}
 	for rows.Next() {
-		rows.Scan(&account.ID, &account.Name, &account.AccountNumber, account.Locked)
+		rows.Scan(&account.ID, &account.Name, &account.AccountNumber, &account.Balance, &account.Locked)
+
 		Accounts = append(Accounts, account)
 	}
 	return Accounts, nil
+}
+
+func GetAllServices(db *sql.DB) (Services []cmodels.Service, err error){
+	rows, err := db.Query(getAllServices)
+	if err != nil {
+		fmt.Errorf("%s, %e",getAllServices, err)
+		return nil, err
+	}
+	defer func() {
+		if innerErr := rows.Close(); innerErr != nil {
+			Services = nil
+		}
+	}()
+
+	for rows.Next(){
+		Service := cmodels.Service{}
+		err := rows.Scan(&Service.ID, &Service.Name, &Service.Price)
+		if err != nil {
+			fmt.Errorf("%s, %e",getAllServices, err)
+			return nil, err
+		}
+		Services = append(Services, Service)
+	}
+	if rows.Err() != nil{
+		fmt.Errorf("%s, %e",getAllServices, rows.Err())
+		return nil, rows.Err()
+	}
+	return Services, nil
+}
+
+func CheckServiceHaving(cmd int64, db *sql.DB) (err error){
+	var id int64
+	err = db.QueryRow(`select id from services where id = ?`, cmd).Scan(&id)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func Test() error {
